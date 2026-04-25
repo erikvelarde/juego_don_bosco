@@ -1,0 +1,400 @@
+#include <iostream>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+vector<string> textoPregunta = {
+    // NIVEL FACIL
+    "Cuando nacio Don Bosco?",
+    "Cual era el nombre de su madre?",
+    "Cual era su nombre completo?",
+    "A que edad hizo su primera comunion?",
+    "A que edad tuvo el primer suenio?",
+    "Como se llamaba su primera sociedad?",
+    "A que edad se ordeno sacerdote?",
+    "Por que llamo salesianos a sus seguidores?",
+    "Donde nacio Don Bosco?",
+    "Como se llamaba su padre?",
+
+    // NIVEL INTERMEDIO
+    "Que edad tenia cuando perdio a su padre?",
+    "Como se llamaban sus hermanos?",
+    "Donde encontro lugar para su oratorio?",
+    "Que institutos religiosos fundo?",
+    "Cuando murio Don Bosco?",
+    "Que son las tres S salesianas?",
+    "Como se llamaba el alumno santo de 15 anos?",
+    "Como se llamaba su perro protector?",
+    "Quien fue el primer sucesor al frente de los salesianos?",
+    "Que sistema educativo creo Don Bosco?",
+
+    // NIVEL DIFICIL
+    "Cual era la frase del reloj del seminario?",
+    "Que actividades se hacian en el oratorio?",
+    "Cual fue su frase antes de morir?",
+    "Cuales eran las reglas de la Sociedad de la Alegria?",
+    "En que anio fue canonizado Don Bosco?",
+    "Que papa canonizo a Don Bosco?",
+    "Que papa lo llamo Padre y Maestro de los Jovenes?",
+    "Quien fue el primer muchacho del oratorio?",
+    "Como se llamaba su confesor?",
+    "A que edad murio Don Bosco?"
+};
+
+vector<string> opcionA = {
+    // NIVEL FACIL
+    "16 de agosto de 1815",
+    "Margarita Occhiena",
+    "Juan Melchor Bosco Occhiena",
+    "11 anios",
+    "9 anios",
+    "Sociedad de la Alegria",
+    "26 anios",
+    "Por San Francisco de Sales",
+    "I Becchi, Italia",
+    "Francisco Bosco",
+
+    // NIVEL INTERMEDIO
+    "2 anios",
+    "Antonio y Jose",
+    "Valdocco",
+    "Salesianos e Hijas de Maria Auxiliadora",
+    "31 de enero de 1888",
+    "Salud, Sabiduria y Santidad",
+    "Domingo Savio",
+    "Gris",
+    "Miguel Rua",
+    "Sistema preventivo",
+
+    // NIVEL DIFICIL
+    "Las horas pasan lentas para los tristes...",
+    "Juegos, cantos y rezar",
+    "Los espero a todos en el paraiso",
+    "Alegria, deber y amigo de Jesus",
+    "1934",
+    "Pio XI",
+    "Juan Pablo II",
+    "Bartolome Garelli",
+    "Jose Cafasso",
+    "72 anios"
+};
+
+vector<string> opcionB = {
+    // NIVEL FACIL
+    "15 de agosto de 1810",
+    "Maria Auxiliadora",
+    "Juan Bosco",
+    "9 anios",
+    "7 anios",
+    "Sociedad de Jesus",
+    "24 anios",
+    "Por San Juan Bosco",
+    "Turin, Italia",
+    "Jose Bosco",
+
+    // NIVEL INTERMEDIO
+    "5 anios",
+    "Pedro y Luis",
+    "Turin centro",
+    "Jesuitas y Franciscanos",
+    "16 de agosto de 1815",
+    "Saber, Ser y Servir",
+    "Bartolome Garelli",
+    "Negro",
+    "Juan Cagliero",
+    "Sistema represivo",
+
+    // NIVEL DIFICIL
+    "El tiempo es oro",
+    "Solo estudiar",
+    "No me olviden",
+    "Estudiar, rezar y trabajar",
+    "1929",
+    "Pio IX",
+    "Pio XI",
+    "Domingo Savio",
+    "Juan Cagliero",
+    "68 anios"
+};
+
+vector<string> opcionC = {
+    // NIVEL FACIL
+    "31 de enero de 1888",
+    "Ana Bosco",
+    "Juan Francisco Bosco",
+    "13 anios",
+    "11 anios",
+    "Sociedad Salesiana",
+    "28 anios",
+    "Por Maria Auxiliadora",
+    "Roma, Italia",
+    "Luis Bosco",
+
+    // NIVEL INTERMEDIO
+    "8 anios",
+    "Carlos y Miguel",
+    "Roma",
+    "Dominicos y Carmelitas",
+    "1 de abril de 1934",
+    "Suenio, Santidad y Saber",
+    "Miguel Rua",
+    "Rocco",
+    "Domingo Savio",
+    "Sistema tecnico",
+
+    // NIVEL DIFICIL
+    "Aprovecha el dia",
+    "Solo trabajar",
+    "Sigan mi ejemplo",
+    "Callar, obedecer y servir",
+    "1888",
+    "Juan Pablo II",
+    "Benedicto XVI",
+    "Miguel Rua",
+    "Francisco Pinardi",
+    "75 anios"
+};
+
+vector<char> respuestaCorrecta = {
+    'a','a','a','a','a','a','a','a','a','a',
+    'a','a','a','a','a','a','a','a','a','a',
+    'a','a','a','a','a','a','a','a','a','a'
+};
+
+// VARIABLES JUGADORES
+string nombreJ1, nombreJ2;
+int vidasJ1, vidasJ2;
+int puntajeJ1, puntajeJ2;
+bool activoJ1, activoJ2;
+
+// FUNCIONES AUXILIARES
+void mostrarLinea() {
+    cout << "----------------------------------------" << endl;
+}
+
+void mostrarEstado() {
+    mostrarLinea();
+    cout << nombreJ1 << " -> Vidas: " << vidasJ1 << " | Puntaje: " << puntajeJ1 << endl;
+    cout << nombreJ2 << " -> Vidas: " << vidasJ2 << " | Puntaje: " << puntajeJ2 << endl;
+    mostrarLinea();
+}
+
+// ESTA FUNCION NOS AYUDA A OBTENER UN NUMERO ALEATORIO DE MANERA SENCILLA.
+int aleatorio(int min, int max) {
+    return min + rand() % (max - min + 1);
+}
+
+// MOSTRAR PREGUNTA
+void mostrarPregunta(int idx, int jugador) {
+    string nombre;
+    int vidas, puntaje;
+
+    if (jugador == 1) {
+        nombre = nombreJ1;
+        vidas = vidasJ1;
+        puntaje = puntajeJ1;
+    } else {
+        nombre = nombreJ2;
+        vidas = vidasJ2;
+        puntaje = puntajeJ2;
+    }
+
+    string op1 = opcionA[idx];
+    string op2 = opcionB[idx];
+    string op3 = opcionC[idx];
+
+    for (int i = 0; i < 6; i++) {
+        int r = aleatorio(1, 3);
+        string temp;
+
+        if (r == 1) {
+            temp = op1; op1 = op2; op2 = temp;
+        } else if (r == 2) {
+            temp = op2; op2 = op3; op3 = temp;
+        } else {
+            temp = op1; op1 = op3; op3 = temp;
+        }
+    }
+
+    string respuestaOriginal;
+
+    if (respuestaCorrecta[idx] == 'a')
+        respuestaOriginal = opcionA[idx];
+    else if (respuestaCorrecta[idx] == 'b')
+        respuestaOriginal = opcionB[idx];
+    else
+        respuestaOriginal = opcionC[idx];
+
+    char letraCorrecta;
+
+    if (op1 == respuestaOriginal) letraCorrecta = 'a';
+    else if (op2 == respuestaOriginal) letraCorrecta = 'b';
+    else letraCorrecta = 'c';
+
+    cout << "\nTurno de: " << nombre;
+    cout << " (Vidas: " << vidas << " | Puntaje: " << puntaje << ")" << endl;
+    mostrarLinea();
+
+    cout << textoPregunta[idx] << endl;
+    cout << "a) " << op1 << endl;
+    cout << "b) " << op2 << endl;
+    cout << "c) " << op3 << endl;
+
+    cout << "\nTu respuesta: ";
+    char respuesta;
+    cin >> respuesta;
+
+    if (respuesta == 'A') respuesta = 'a';
+    if (respuesta == 'B') respuesta = 'b';
+    if (respuesta == 'C') respuesta = 'c';
+
+    if (respuesta == letraCorrecta) {
+        cout << ">> CORRECTO! +10 puntos\n";
+
+        if (jugador == 1) puntajeJ1 += 10;
+        else puntajeJ2 += 10;
+    } else {
+        string textoCorrecta;
+
+        if (letraCorrecta == 'a') textoCorrecta = op1;
+        else if (letraCorrecta == 'b') textoCorrecta = op2;
+        else textoCorrecta = op3;
+
+        cout << ">> INCORRECTO. Pierdes 1 vida.\n";
+        cout << ">> Respuesta correcta: " << textoCorrecta << endl;
+
+        if (jugador == 1) {
+            vidasJ1--;
+            if (vidasJ1 <= 0) {
+                vidasJ1 = 0;
+                activoJ1 = false;
+            }
+        } else {
+            vidasJ2--;
+            if (vidasJ2 <= 0) {
+                vidasJ2 = 0;
+                activoJ2 = false;
+            }
+        }
+    }
+}
+
+// FUNCION PARA EJECUTAR NIVEL
+void ejecutarNivel(int nivel) {
+    cout << "\n========================================\n";
+
+    // if (nivel == 1) cout << "NIVEL 1 - FACIL\n";
+    // if (nivel == 2) cout << "NIVEL 2 - INTERMEDIO\n";
+    // if (nivel == 3) cout << "NIVEL 3 - DIFICIL\n";
+    switch(nivel) {
+        case 1:
+            cout << "NIVEL 1 - FACIL\n";
+            break;
+        case 2:
+            cout << "NIVEL 2 - INTERMEDIO\n";
+            break;
+        case 3:
+            cout << "NIVEL 3 - DIFICIL\n";
+            break;
+        default:
+            cout << "NIVEL DESCONOCIDO\n";
+            break;
+    }
+
+    cout << "========================================\n";
+
+    mostrarEstado();
+
+    int inicio = (nivel - 1) * 10;
+
+    int disponibles[10];
+    int cantDisponibles = 10;
+
+    for (int i = 0; i < 10; i++) {
+        disponibles[i] = inicio + i;
+    }
+
+    int ronda = 1;
+
+    while (ronda <= 3) {
+        if (!activoJ1 && !activoJ2) break;
+
+        cout << "\n--- Ronda " << ronda << " ---" << endl;
+
+        if (activoJ1 && cantDisponibles > 0) {
+            int pos = aleatorio(0, cantDisponibles - 1);
+            int idx = disponibles[pos];
+
+            disponibles[pos] = disponibles[cantDisponibles - 1];
+            cantDisponibles--;
+
+            mostrarPregunta(idx, 1);
+        }
+
+        if (activoJ2 && cantDisponibles > 0) {
+            int pos = aleatorio(0, cantDisponibles - 1);
+            int idx = disponibles[pos];
+
+            disponibles[pos] = disponibles[cantDisponibles - 1];
+            cantDisponibles--;
+
+            mostrarPregunta(idx, 2);
+        }
+
+        ronda++;
+    }
+
+    cout << "\n--- Fin del nivel ---" << endl;
+    mostrarEstado();
+}
+
+// FUNCION PARA MOSTRAR AL GANADOR
+void mostrarGanador() {
+    cout << "\nRESULTADOS FINALES\n";
+    mostrarEstado();
+
+    if (vidasJ1 > 0 && vidasJ2 <= 0)
+        cout << nombreJ1 << " gana por conservar vidas!\n";
+    else if (vidasJ2 > 0 && vidasJ1 <= 0)
+        cout << nombreJ2 << " gana por conservar vidas!\n";
+    else {
+        if (puntajeJ1 > puntajeJ2)
+            cout << nombreJ1 << " gana con " << puntajeJ1 << " puntos!\n";
+        else if (puntajeJ2 > puntajeJ1)
+            cout << nombreJ2 << " gana con " << puntajeJ2 << " puntos!\n";
+        else
+            cout << "EMPATE!\n";
+    }
+}
+
+// CODIGO PRINCIPAL DEL JUEGO
+int main() {
+    srand(time(0));
+
+    cout << "JUEGO DE PREGUNTAS - DON BOSCO\n";
+    mostrarLinea();
+
+    cout << "Nombre del Jugador 1: ";
+    cin >> nombreJ1;
+
+    cout << "Nombre del Jugador 2: ";
+    cin >> nombreJ2;
+
+    vidasJ1 = vidasJ2 = 3;
+    puntajeJ1 = puntajeJ2 = 0;
+    activoJ1 = activoJ2 = true;
+
+    ejecutarNivel(1);
+
+    if (activoJ1 || activoJ2)
+        ejecutarNivel(2);
+
+    if (activoJ1 || activoJ2)
+        ejecutarNivel(3);
+
+    mostrarGanador();
+
+    return 0;
+}
