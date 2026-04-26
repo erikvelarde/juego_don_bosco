@@ -2,15 +2,8 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
-
-#ifdef _WIN32
-    #include <conio.h>    // _kbhit(), _getch()
-    #include <windows.h>  // Sleep()
-#else
-    #include <termios.h>    // tcgetattr(), tcsetattr()
-    #include <unistd.h>     // read(), STDIN_FILENO
-    #include <sys/select.h> // select(), fd_set
-#endif
+#include <conio.h>    // _kbhit(), _getch()
+#include <windows.h>  // Sleep()
 
 using namespace std;
 
@@ -120,7 +113,6 @@ vector<string> opcionDistractor2 = {
 
 // CONFIGURACION DE NIVELES
 int puntajeParaAvanzar[4] = { 0, 30, 60, 90 };
-// int puntajeParaAvanzar[4] = { 0, 10, 20, 30 };
 
 // VARIABLES DE LOS JUGADORES
 string nombreJugador[2];
@@ -136,15 +128,9 @@ int cantidadDisponibles[2];
 
 // FUNCIONES AUXILIARES
 
-// ─── LIMPIAR TERMINAL (deteccion de OS) ──────────────────────────────────────
 void limpiarTerminal() {
-#ifdef _WIN32
     system("cls");
-#else
-    system("clear");
-#endif
 }
-// ─────────────────────────────────────────────────────────────────────────────
 
 void mostrarLinea() {
     cout << "----------------------------------------" << endl;
@@ -184,8 +170,6 @@ void mostrarEstadoJugadores() {
     mostrarLinea();
 }
 
-// FUNCION: leerRespuestaConCronometro()
-#ifdef _WIN32
 char leerRespuestaConCronometro() {
     time_t momentoInicio       = time(0);
     int    ultimoSegundoMostrado = -1;
@@ -229,79 +213,7 @@ char leerRespuestaConCronometro() {
     }
 }
 
-#else
-char leerRespuestaConCronometro() {
-
-    struct termios configuracionOriginal;
-    tcgetattr(STDIN_FILENO, &configuracionOriginal);
-
-    struct termios modoRaw = configuracionOriginal;
-    modoRaw.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &modoRaw);
-
-    time_t momentoInicio         = time(0);
-    int    ultimoSegundoMostrado = -1;
-    char   teclaEscrita          = ' ';
-    char   resultado             = '0';
-
-    while (true) {
-        int segundosTranscurridos = (int)(time(0) - momentoInicio);
-        int segundosRestantes     = segundosPorPregunta - segundosTranscurridos;
-
-        if (segundosRestantes != ultimoSegundoMostrado) {
-            ultimoSegundoMostrado = segundosRestantes;
-            if (teclaEscrita == ' ')
-                cout << "\rTiempo: " << segundosRestantes << " seg | Tu respuesta: _   " << flush;
-            else
-                cout << "\rTiempo: " << segundosRestantes << " seg | Tu respuesta: " << teclaEscrita << "   " << flush;
-        }
-
-        if (segundosRestantes <= 0) {
-            cout << "\n";
-            resultado = '0';
-            break;
-        }
-
-        fd_set descriptoresListos;
-        FD_ZERO(&descriptoresListos);
-        FD_SET(STDIN_FILENO, &descriptoresListos);
-
-        struct timeval tiempoEspera;
-        tiempoEspera.tv_sec  = 0;
-        tiempoEspera.tv_usec = 100000;
-
-        int hayTeclaDisponible = select(STDIN_FILENO + 1, &descriptoresListos, NULL, NULL, &tiempoEspera);
-
-        if (hayTeclaDisponible > 0) {
-            char teclaPresionada;
-            read(STDIN_FILENO, &teclaPresionada, 1);
-
-            if (teclaPresionada == '\n' || teclaPresionada == '\r') {
-                cout << "\n";
-                resultado = (teclaEscrita == ' ') ? ' ' : teclaEscrita;
-                break;
-
-            } else if (teclaPresionada == 127 || teclaPresionada == 8) {
-                teclaEscrita = ' ';
-                cout << "\rTiempo: " << segundosRestantes << " seg | Tu respuesta: _   " << flush;
-
-            } else {
-                teclaEscrita = teclaPresionada;
-                cout << "\rTiempo: " << segundosRestantes << " seg | Tu respuesta: " << teclaPresionada << "   " << flush;
-            }
-        }
-    }
-
-    tcsetattr(STDIN_FILENO, TCSANOW, &configuracionOriginal);
-    return resultado;
-}
-#endif
-
 void hacerPregunta(int jugador) {
-
-    // ─── Limpiar terminal antes de cada turno ────────────────────────────────
-    // limpiarTerminal();
-    // ─────────────────────────────────────────────────────────────────────────
 
     int posicionAleatoria = numeroAleatorio(0, cantidadDisponibles[jugador] - 1);
     int indicePregunta    = preguntasDisponibles[jugador][posicionAleatoria];
